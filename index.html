@@ -3,25 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Display Example</title>
+  <title>Random Image Viewer</title>
   <style>
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f0f0f0;
+      background-color: #222;
       margin: 0;
     }
     img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      max-width: 95%;
+      max-height: 95%;
     }
   </style>
 </head>
 <body>
-  <img src="photo.jpg" alt="Example Image">
+  <img id="randomImage" alt="Random Image">
+
+  <script>
+    // List of image filenames in the subdirectory "images"
+    const images = [
+      "Witch.jpg",
+      "Pirate.jpg",
+      "BigHead.jpg",
+      "Ghost.jpg",
+      "Vampire.jpg"
+    ];
+
+    // Remember the last image (persisted across reloads if desired)
+    let lastImage = localStorage.getItem("lastImage");
+
+    // Pick a random image that’s not the same as last time
+    let newImage;
+    if (images.length === 1) {
+      newImage = images[0];
+    } else {
+      do {
+        newImage = images[Math.floor(Math.random() * images.length)];
+      } while (newImage === lastImage);
+    }
+
+    // Save the new choice for next time
+    localStorage.setItem("lastImage", newImage);
+
+    // Display the image
+    document.getElementById("randomImage").src = "images/" + newImage;
+  </script>
 </body>
 </html>
