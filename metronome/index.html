@@ -184,6 +184,10 @@
 
         // Play a woodblock/click sound
         function playClick() {
+            if (!audioContext || audioContext.state === 'suspended') {
+                return;
+            }
+            
             const now = audioContext.currentTime;
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
@@ -194,11 +198,11 @@
             oscillator.frequency.setValueAtTime(800, now);
             oscillator.type = 'sine';
 
-            gainNode.gain.setValueAtTime(0.3, now);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            gainNode.gain.setValueAtTime(0.5, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
 
             oscillator.start(now);
-            oscillator.stop(now + 0.05);
+            oscillator.stop(now + 0.1);
         }
 
         // Speak the measure number
@@ -243,8 +247,13 @@
         }
 
         // Start/pause toggle
-        startButton.addEventListener('click', () => {
+        startButton.addEventListener('click', async () => {
             initAudioContext();
+            
+            // Resume audio context if suspended (iOS requirement)
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
 
             if (!isPlaying) {
                 // Start playing
